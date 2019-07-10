@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>商品管理</title>
+		<link th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
+		<link th:href="@{/css/dashboard.css}" rel="stylesheet">
+		<style type="text/css">
+			/* Chart.js */
+			
+			@-webkit-keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			@keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			.chartjs-render-monitor {
+				-webkit-animation: chartjs-render-animation 0.001s;
+				animation: chartjs-render-animation 0.001s;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--引入抽取的topbar-->
+		<div th:replace="commons/bar::topbar"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<!--引入侧边栏-->
+				<div th:replace="commons/bar::#sidebar(activeUri='shoesList')"></div>
+
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+					<div class="table-responsive">
+
+						<form th:action="@{/shoes}" method="post">
+
+							<input type="hidden" name="_method" value="put" th:if="${shoes!=null}"/>
+							<input type="hidden" name="id" th:value="${shoes.id}">
+
+							<div class="form-group">
+								<label>型号</label>
+								<!--提交的是型号的id-->
+								<select class="form-control">
+									<option th:value="${category.id}" th:text="${category.type}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>产品</label>
+								<!--提交的是产品的id-->
+								<select class="form-control" name="product">
+									<option th:value="${product.id}" th:text="${product.name}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>款式</label>
+								<!--提交的是款式的值-->
+								<select class="form-control" name="style">
+									<option th:value="${shoes.style}" th:text="${shoes.style==0?'男款':'女款'}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>颜色</label>
+								<!--提交的是颜色的id-->
+								<select class="form-control" name="colour">
+									<option th:value="${colour.id}" th:text="${colour.colour}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>号码</label>
+								<!--提交的是产品的id-->
+								<select class="form-control" name="size">
+									<option th:value="${size.id}" th:text="${size.size}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>价格</label>
+								<input name="price" type="text" class="form-control" required="" readonly
+									   placeholder="价格" th:value="${#numbers.formatDecimal(shoes.product.price, 1, 2)}">
+							</div>
+							<div class="form-group">
+								<label>材料</label>
+								<input name="material" type="text" class="form-control" required="" readonly
+									   placeholder="材料" th:value="${shoes.product.material}">
+							</div>
+							<div class="form-group">
+								<label for="product.note">备注</label><br/>
+								<textarea class="form-control" id="product.note" rows="3" name="note" readonly
+										  th:text="${shoes.product.note}" type="text"></textarea>
+							</div>
+							<div class="form-group">
+								<label>库存</label>
+								<input name="stock" type="text" class="form-control"
+									   required="" placeholder="库存" th:value="${shoes.stock}">
+							</div>
+							<button type="submit" class="btn btn-primary" th:text="修改">修改</button>
+						</form>
+
+					</div>
+				</main>
+			</div>
+		</div>
+
+		<!-- Bootstrap core JavaScript
+    ================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script type="text/javascript" th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+		<script type="text/javascript" th:src="@{/webjars/popper.js/1.11.1/dist/popper.js}"></script>
+		<script type="text/javascript" th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.js}"></script>
+
+		<!-- Icons -->
+		<script type="text/javascript" th:src="@{/js/feather.min.js}"></script>
+		<script>
+			feather.replace()
+		</script>
+
+	</body>
+
+</html>

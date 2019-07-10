@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>商品管理</title>
+		<link th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
+		<link th:href="@{/css/dashboard.css}" rel="stylesheet">
+		<style type="text/css">
+			/* Chart.js */
+			
+			@-webkit-keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			@keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			.chartjs-render-monitor {
+				-webkit-animation: chartjs-render-animation 0.001s;
+				animation: chartjs-render-animation 0.001s;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--引入抽取的topbar-->
+		<div th:replace="commons/bar::topbar"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<!--引入侧边栏-->
+				<div th:replace="commons/bar::#sidebar(activeUri='shoesList')"></div>
+
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+					<form th:action="@{/shoes}" method="post">
+
+						<!--<input type="hidden" name="_method" value="put" th:if="${shoes!=null}"/>-->
+						<input type="hidden" name="id" th:if="${shoes!=null}" th:value="${shoes.id}">
+						<div class="form-group">
+							<label>型号</label>
+							<select class="form-control notnull" name="category" id="category">
+								<option disabled="disabled" selected="selected">-请选择-</option>
+								<option th:value="${category.id}" th:each="category:${categories}"
+										th:text="${category.type}">-请选择-</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label>产品</label>
+							<select class="form-control notnull" name="product" id="product">
+								<option disabled="disabled" selected="selected">-请选择-</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label>款式</label>
+							<select class="form-control notnull" name="style" id="style">
+								<option disabled="disabled" selected="selected">-请选择-</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label>颜色</label>
+							<select class="form-control notnull" name="colour" id="colour">
+								<option disabled="disabled" selected="selected">-请选择-</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label>号码</label>
+							<select class="form-control notnull" name="size" id="size">
+								<option disabled="disabled" selected="selected">-请选择-</option>
+							</select>
+						</div>
+
+						<button type="submit" class="btn btn-primary" th:text="添加">添加</button>
+					</form>
+				</main>
+			</div>
+		</div>
+
+		<!-- Bootstrap core JavaScript
+    ================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script type="text/javascript" th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+		<script type="text/javascript" th:src="@{/webjars/popper.js/1.11.1/dist/popper.js}"></script>
+		<script type="text/javascript" th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.js}"></script>
+
+		<!-- Icons -->
+		<script type="text/javascript" th:src="@{/js/feather.min.js}"></script>
+		<script>
+			feather.replace()
+		</script>
+
+		<script >
+			$("#category").change(function () {		//由型号加载产品
+				$.post("selectCategory", {"id":$(this).val()}, function (data) {
+					$("#product").empty();		//清空select
+					var $opProduct = $('<option value="">-请选择-</option>');	//添加提示
+					var list = data;	//接收数据
+					$("#product").append($opProduct);	//添加到select
+					for (var i=0; i<list.length; i++) {
+					    $opProduct = $("<option value='" +list[i].id +"'>" + list[i].name + "</option>");
+					    $("#product").append($opProduct);
+					}
+                });
+            });
+		</script>
+
+		<script >
+            $("#product").change(function () {		//由产品加载款式、颜色和型号
+                $.post("selectProduct", {"id":$(this).val()}, function (data) {
+                    $("#style").empty();
+                    var $opStyle = $('<option value="">-请选择-</option>');
+                    $("#colour").empty();
+                    var $opColour = $('<option value="">-请选择-</option>');
+                    $("#size").empty();
+                    var $opSize = $('<option value="">-请选择-</option>');
+                    var colours = data.colours;
+                    $("#colour").append($opColour);
+                    for (var i=0; i<colours.length; i++) {
+                        $opColour = $("<option value='" +colours[i].id +"'>" + colours[i].colour + "</option>");
+                        $("#colour").append($opColour);
+                    }
+                    var sizes = data.sizes;
+                    $("#size").append($opSize);
+                    for (var i=0; i<sizes.length; i++) {
+                        $opSize = $("<option value='" +sizes[i].id +"'>" + sizes[i].size + "</option>");
+                        $("#size").append($opSize);
+                    }
+                    var flag = data.style;
+                    if (flag == 0) {
+                        $("style").append($("<option value='0'>男款</option>"));
+					}
+                    if (flag == 1) {
+                        $("style").append($("<option value='1'>女款</option>"));
+                    }
+                    if (flag == 2) {
+                        $("style").append($("<option value='0'>男款</option>"));
+                        $("style").append($("<option value='1'>女款</option>"));
+                    }
+                });
+            });
+		</script>
+
+	</body>
+
+</html>
